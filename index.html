@@ -164,7 +164,6 @@ p {
 <div class="box" id="main"></div>
 
 <script>
-/* 🔥 THÊM: load lại kết quả nếu đã có */
 let savedMoney = localStorage.getItem("cmsn_money");
 if(savedMoney){
     window.addEventListener("load", ()=>{
@@ -184,9 +183,7 @@ function playMusic() {
         if (playPromise !== undefined) {
             playPromise.then(_ => {
                 isMusicPlaying = true;
-            }).catch(error => {
-                console.log("Trình duyệt chặn autoplay, chờ người dùng tương tác.");
-            });
+            }).catch(error => {});
         }
     }
 }
@@ -340,13 +337,20 @@ function page4(money){
             confetti({particleCount: 200, spread: 100, origin: {y: 0.6}});
 
             let giftDiv = document.getElementById("gift");
-
             let kq = Math.round(money);
-            let messLink = `https://m.me/nguyen.o.the.vinh?text=${encodeURIComponent("Đã nhận " + kq + "k")}`;
+
+            let ua = navigator.userAgent;
+            let messLink;
+
+            if(/iPhone|iPad|iPod|Android/i.test(ua)){
+                messLink = "fb-messenger://user-thread/61553583331658";
+            } else {
+                messLink = `https://m.me/nguyen.o.the.vinh?text=${encodeURIComponent("Đã nhận " + kq + "k")}`;
+            }
 
             giftDiv.innerHTML = `
                 <p>🎁 Nhấn để nhận quà của bạn:</p>
-                 <a href="${messLink}" target="_blank">
+                <a href="${messLink}" target="_blank">
                     <button>Nhận quà 🎁</button>
                 </a>
             `;
