@@ -8,28 +8,69 @@
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <style>
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
+
 body {
-    font-family: Arial;
+    font-family: 'Poppins', sans-serif;
     text-align: center;
     margin: 0;
-    height: 100vh;
+    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: #111;
-    color: white;
+    color: #fff;
+    background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),
+    url('https://lh3.googleusercontent.com/d/1Yx0jJuyUAgEaBXOQPywPXubilDKx_YFo') no-repeat center/cover;
+    overflow: hidden;
 }
 
 .box {
-    background: rgba(255,255,255,0.1);
-    padding: 40px;
-    border-radius: 20px;
+    background: rgba(255,255,255,0.08);
+    backdrop-filter: blur(20px);
+    border-radius: 30px;
+    padding: 60px 40px;
+    width: 95%;
+    max-width: 750px;
+}
+
+.fade-out {
+    opacity: 0;
+    transform: scale(0.8);
+    transition: 0.5s;
+}
+
+h1 { font-size: 3em; }
+h2 { color: #ffe600; }
+
+.equation {
+    background: rgba(0,0,0,0.4);
+    padding: 20px;
+    border-radius: 15px;
+    margin: 25px 0;
+}
+
+input {
+    padding: 15px;
+    font-size: 18px;
+    border-radius: 50px;
+    width: 70%;
+    text-align: center;
 }
 
 button {
-    padding: 10px 20px;
+    padding: 15px 30px;
     font-size: 18px;
+    border-radius: 50px;
+    background: #ffe600;
+    border: none;
     cursor: pointer;
+    margin-top: 20px;
+}
+
+.money-text {
+    font-size: 4em;
+    font-weight: bold;
+    color: gold;
 }
 </style>
 </head>
@@ -37,39 +78,132 @@ button {
 <body>
 
 <audio id="bgMusic" loop>
-    <!-- ✅ FIX CHỮ HOA -->
+    <!-- FIX chữ hoa -->
     <source src="nhacnen.MP3" type="audio/mpeg">
 </audio>
 
 <div class="box" id="main"></div>
 
 <script>
+let chosen = 0;
 let isPlaying = false;
 
-// ✅ bật nhạc khi user click
+// bật nhạc khi click
 document.addEventListener("click", () => {
-    const audio = document.getElementById("bgMusic");
+    let audio = document.getElementById("bgMusic");
     if (!isPlaying) {
         audio.volume = 0.6;
-        audio.play().then(() => {
-            isPlaying = true;
-        }).catch(() => {});
+        audio.play().then(()=> isPlaying = true).catch(()=>{});
     }
 });
 
-// test đơn giản trước
+function transition(next){
+    let box = document.getElementById("main");
+    box.classList.add("fade-out");
+    setTimeout(()=>{
+        next();
+        box.classList.remove("fade-out");
+    },500);
+}
+
+// Trang 1
 function page1(){
     document.getElementById("main").innerHTML = `
-        <h1>🎂 Happy Birthday 🎂</h1>
-        <button onclick="boom()">Bấm thử 🎉</button>
+        <h1>🎂 Chúc mừng sinh nhật 🎂</h1>
+        <button onclick="transition(page2)">Nhận quà</button>
     `;
 }
 
-function boom(){
-    confetti({
-        particleCount: 200,
-        spread: 100
-    });
+// Trang 2
+function page2(){
+    document.getElementById("main").innerHTML = `
+        <h2>Thử thách 1</h2>
+        <div class="equation">
+        ½(4x³ - 120πx² + 1100π²x - 3000π³) <br>
+        - (x³ - 30πx² + 275π²x - 750π³) = 0
+        </div>
+
+        <input id="ans1" placeholder="5pi / 10pi / 15pi">
+        <br><button onclick="check1()">Tiếp</button>
+    `;
+}
+
+// check 1
+function check1(){
+    let val = document.getElementById("ans1").value.trim().toLowerCase();
+
+    if(val==="5pi") chosen = 5*Math.PI;
+    else if(val==="10pi") chosen = 10*Math.PI;
+    else if(val==="15pi") chosen = 15*Math.PI;
+    else{
+        alert("Sai rồi 😏");
+        return;
+    }
+
+    transition(page3);
+}
+
+// Trang 3
+function page3(){
+    let k = Math.round(chosen / Math.PI); 
+
+    let sum = `${k}π + ${10*k}`;
+    let product = `${10*k*k}π`;
+
+    document.getElementById("main").innerHTML = `
+        <h2>Thử thách 2</h2>
+
+        <div class="equation">
+        x² - (${sum})x + ${product} = 0
+        </div>
+
+        <input id="ans2" type="number">
+        <br><button onclick="check2()">Chốt</button>
+    `;
+}
+
+// check 2 (🔥 sửa tại đây)
+function check2(){
+    let val = Number(document.getElementById("ans2").value);
+
+    let correct;
+    if (chosen == 5*Math.PI) {
+        correct = 80; // 🎯 CHỈ sửa chỗ này
+    } else {
+        correct = (10 * chosen) / Math.PI;
+    }
+
+    if(Math.round(val) === Math.round(correct)){
+        transition(()=>page4(correct));
+    } else {
+        alert("Sai rồi 😏");
+    }
+}
+
+// Trang cuối
+function page4(money){
+    let moneyDisplay = Math.round(money) * 1000;
+
+    document.getElementById("main").innerHTML = `
+        <h1>🎉 Chúc mừng 🎉</h1>
+        <div class="money-text" id="money">0 VNĐ</div>
+    `;
+
+    let start=null;
+
+    function animate(t){
+        if(!start) start=t;
+        let progress=Math.min((t-start)/2000,1);
+        let value=Math.floor(progress * moneyDisplay);
+
+        document.getElementById("money").innerHTML =
+            value.toLocaleString("vi-VN")+" VNĐ";
+
+        if(progress<1) requestAnimationFrame(animate);
+        else confetti({particleCount:200, spread:100});
+    }
+
+    requestAnimationFrame(animate);
 }
 
 page1();
