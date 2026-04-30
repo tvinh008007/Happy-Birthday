@@ -22,66 +22,143 @@ body {
 
     background: 
         linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),
-        url('https://lh3.googleusercontent.com/d/1Yx0jJuyUAgEaBXOQPywPXubilDKx_YFo') no-repeat center / cover;
+        url('https://lh3.googleusercontent.com/d/1Yx0jJuyUAgEaBXOQPywPXubilDKx_YFo') no-repeat center center / cover;
 
     overflow: hidden;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
 }
 
 .box {
     background: rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3), inset 0 0 15px rgba(255, 255, 255, 0.1);
     border-radius: 30px;
     padding: 60px 40px;
     width: 95%;
     max-width: 750px;
+    min-height: 350px;
+    transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
 }
 
 .fade-out {
     opacity: 0;
-    transform: scale(0.8);
-    transition: 0.5s;
+    transform: scale(0.8) translateY(30px);
+    filter: blur(10px);
 }
 
-h1 { font-size: 3em; }
-h2 { color: #ffe600; }
+h1 { 
+    font-size: 3em; 
+    margin-bottom: 10px;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+    animation: floating 3s ease-in-out infinite;
+}
+
+@keyframes floating {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
+}
+
+h2 { 
+    color: #ffe600; 
+    font-size: 2em; 
+    text-shadow: 0 0 10px rgba(255, 222, 0, 0.5);
+}
 
 .equation {
     background: rgba(0, 0, 0, 0.4);
     padding: 20px;
     border-radius: 15px;
     margin: 25px 0;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.2em;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
 }
 
 input {
-    padding: 15px;
+    padding: 15px 25px;
     font-size: 18px;
     border-radius: 50px;
-    width: 70%;
+    border: 2px solid transparent;
+    width: 75%;
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    font-weight: 600;
+    transition: all 0.3s ease;
     text-align: center;
+    outline: none;
+}
+
+input:focus {
+    border: 2px solid #ffe600;
+    box-shadow: 0 0 20px rgba(255, 230, 0, 0.4);
+    transform: scale(1.02);
 }
 
 button {
-    padding: 15px 30px;
-    font-size: 18px;
+    padding: 15px 35px;
+    font-size: 1.2em;
+    font-weight: 800;
     border-radius: 50px;
-    background: #ffe600;
+    background: linear-gradient(45deg, #ffe600, #ff9900);
+    color: #2a1b3d;
     border: none;
+    margin-top: 25px;
     cursor: pointer;
-    margin-top: 20px;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(255, 153, 0, 0.4);
+}
+
+button:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 10px 25px rgba(255, 153, 0, 0.6);
 }
 
 .money-text {
     font-size: 4em;
-    font-weight: bold;
-    color: gold;
+    font-weight: 800;
+    background: linear-gradient(to right, #ffd700, #ff8c00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
+    margin: 20px 0;
+}
+
+.gift-btn button {
+    background: linear-gradient(45deg, #ff4d6d, #ff003c);
+    color: white;
+    box-shadow: 0 0 20px rgba(255,77,109,0.8);
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); box-shadow: 0 0 20px rgba(255,77,109,0.5); }
+    50% { transform: scale(1.1); box-shadow: 0 0 40px rgba(255,77,109,0.9); }
+    100% { transform: scale(1); box-shadow: 0 0 20px rgba(255,77,109,0.5); }
+}
+
+p {
+    font-size: 1.2em;
+    opacity: 0.9;
 }
 </style>
 </head>
 
 <body>
 
-<!-- 🎵 NHẠC -->
 <audio id="bgMusic" loop>
+    <!-- FIX DUY NHẤT -->
     <source src="nhacnen.MP3" type="audio/mpeg">
 </audio>
 
@@ -89,42 +166,46 @@ button {
 
 <script>
 let chosen = 0;
+let confettiInterval1; 
 let isMusicPlaying = false;
 
-// ✅ FIX autoplay cho GitHub
 function playMusic() {
     let bgm = document.getElementById("bgMusic");
     if (!isMusicPlaying) {
         bgm.volume = 0.6;
-        bgm.play().then(() => {
-            isMusicPlaying = true;
-        }).catch(() => {});
+        let playPromise = bgm.play();
+        if (playPromise !== undefined) {
+            playPromise.then(_ => {
+                isMusicPlaying = true;
+            }).catch(error => {
+                console.log("Trình duyệt chặn autoplay, chờ người dùng tương tác.");
+            });
+        }
     }
 }
 
-// click đâu cũng bật nhạc
-document.addEventListener('click', playMusic);
-
-// ===== PHÁO HOA =====
-let confettiInterval1;
+document.body.addEventListener('click', playMusic);
 
 function startContinuousConfetti() {
     let duration = 15 * 1000;
     let animationEnd = Date.now() + duration;
+    let defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+    function randomInRange(min, max) { return Math.random() * (max - min) + min; }
 
     confettiInterval1 = setInterval(function() {
         let timeLeft = animationEnd - Date.now();
-        if (timeLeft <= 0) return clearInterval(confettiInterval1);
-
-        confetti({particleCount: 40, spread: 80});
-    }, 300);
+        if (timeLeft <= 0) { return clearInterval(confettiInterval1); }
+        let particleCount = 50 * (timeLeft / duration);
+        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+    }, 250);
 }
 
 function stopConfetti() {
     clearInterval(confettiInterval1);
 }
 
-// ===== CHUYỂN CẢNH =====
 function transition(nextPage){
     stopConfetti();
     playMusic();
@@ -135,19 +216,18 @@ function transition(nextPage){
     setTimeout(()=>{
         nextPage();
         box.classList.remove("fade-out");
-    }, 500);
+    }, 600);
 }
 
-// ===== PAGE 1 =====
 function page1(){
     document.getElementById("main").innerHTML = `
-        <h1>🎂 Chúc mừng sinh nhật 🎂</h1>
+        <h1>🎂 Chúc mừng sinh nhật! 🎂</h1>
+        <p>Bạn có muốn nhận quà?</p>
         <button onclick="transition(page2)">Nhận quà</button>
     `;
     startContinuousConfetti();
 }
 
-// ===== PAGE 2 =====
 function page2(){
     document.getElementById("main").innerHTML = `
         <h2>Thử thách 1</h2>
@@ -156,12 +236,16 @@ function page2(){
         - (x³ - 30πx² + 275π²x - 750π³) = 0
         </div>
 
-        <input id="ans1" placeholder="5pi / 10pi / 15pi">
-        <br><button onclick="check1()">Tiếp</button>
+        <input id="ans1" placeholder="Nhập: (vd 16pi) " autocomplete="off">
+        <br><button onclick="check1()">Tiếp tục</button>
     `;
+
+    document.getElementById("ans1").focus();
+    document.getElementById("ans1").addEventListener("keydown", e=>{
+        if(e.key==="Enter") check1();
+    });
 }
 
-// ===== CHECK 1 =====
 function check1(){
     let val = document.getElementById("ans1").value.trim().toLowerCase();
 
@@ -176,29 +260,42 @@ function check1(){
     transition(page3);
 }
 
-// ===== PAGE 3 =====
 function page3(){
     let k = Math.round(chosen / Math.PI); 
 
-    let sum = `${k}π + ${10*k}`;
-    let product = `${10*k*k}π`;
+    let sum, product;
+
+    if(k == 5){
+        sum = "5π + 90";
+        product = "450π";
+    } else {
+        sum = `${k}π + ${10*k}`;
+        product = `${10*k*k}π`;
+    }
 
     document.getElementById("main").innerHTML = `
         <h2>Thử thách 2</h2>
+        <p>Biết giá trị bạn vừa nhập là nghiệm <b>x₁</b>:</p>
 
         <div class="equation">
         x² - (${sum})x + ${product} = 0
         </div>
 
-        <input id="ans2" type="number">
+        <p>Tìm nghiệm còn lại <b>x₂</b>:</p>
+
+        <input id="ans2" type="number" autocomplete="off">
         <br><button onclick="check2()">Chốt</button>
     `;
+
+    document.getElementById("ans2").focus();
+    document.getElementById("ans2").addEventListener("keydown", e=>{
+        if(e.key==="Enter") check2();
+    });
 }
 
-// ===== CHECK 2 (giữ bản gốc) =====
 function check2(){
     let val = Number(document.getElementById("ans2").value);
-    let correct = (10 * chosen) / Math.PI;
+    let correct = (chosen == 5*Math.PI) ? 90 : (10 * chosen) / Math.PI;
 
     if(Math.round(val) === Math.round(correct)){
         transition(()=>page4(correct));
@@ -207,27 +304,42 @@ function check2(){
     }
 }
 
-// ===== PAGE 4 =====
 function page4(money){
     let moneyDisplay = Math.round(money) * 1000;
 
     document.getElementById("main").innerHTML = `
         <h1>🎉 Chúc mừng 🎉</h1>
         <div class="money-text" id="money">0 VNĐ</div>
+        <div id="gift" style="opacity: 0; transition: opacity 1s; transform: translateY(20px);"></div>
     `;
 
-    let start=null;
+    let startTime=null;
+    let duration=2000;
 
     function animate(t){
-        if(!start) start=t;
-        let progress=Math.min((t-start)/2000,1);
-        let value=Math.floor(progress * moneyDisplay);
+        if(!startTime) startTime=t;
+        let progress=Math.min((t-startTime)/duration,1);
+        
+        let easeOutQuart = 1 - Math.pow(1 - progress, 4);
+        let value=Math.floor(easeOutQuart * moneyDisplay);
 
-        document.getElementById("money").innerHTML =
-            value.toLocaleString("vi-VN")+" VNĐ";
+        document.getElementById("money").innerHTML = value.toLocaleString("vi-VN") + " VNĐ";
 
-        if(progress<1) requestAnimationFrame(animate);
-        else confetti({particleCount:200, spread:100});
+        if(progress<1){
+            requestAnimationFrame(animate);
+        } else {
+            confetti({particleCount: 200, spread: 100, origin: {y: 0.6}});
+
+            let giftDiv = document.getElementById("gift");
+            giftDiv.innerHTML = `
+                <p>🎁 Nhấn để nhận quà của bạn:</p>
+                 <a href="https://www.facebook.com/nguyen.o.the.vinh/">
+                    <button>Nhận quà 🎁</button>
+                </a>
+            `;
+            giftDiv.style.opacity = 1;
+            giftDiv.style.transform = "translateY(0)";
+        }
     }
 
     requestAnimationFrame(animate);
