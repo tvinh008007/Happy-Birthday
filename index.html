@@ -19,13 +19,16 @@ body {
     align-items: center;
     justify-content: center;
     color: #fff;
-    background: linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),
-    url('https://lh3.googleusercontent.com/d/1Yx0jJuyUAgEaBXOQPywPXubilDKx_YFo') no-repeat center/cover;
+
+    background: 
+        linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),
+        url('https://lh3.googleusercontent.com/d/1Yx0jJuyUAgEaBXOQPywPXubilDKx_YFo') no-repeat center / cover;
+
     overflow: hidden;
 }
 
 .box {
-    background: rgba(255,255,255,0.08);
+    background: rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(20px);
     border-radius: 30px;
     padding: 60px 40px;
@@ -43,7 +46,7 @@ h1 { font-size: 3em; }
 h2 { color: #ffe600; }
 
 .equation {
-    background: rgba(0,0,0,0.4);
+    background: rgba(0, 0, 0, 0.4);
     padding: 20px;
     border-radius: 15px;
     margin: 25px 0;
@@ -77,8 +80,8 @@ button {
 
 <body>
 
+<!-- 🎵 NHẠC -->
 <audio id="bgMusic" loop>
-    <!-- FIX chữ hoa -->
     <source src="nhacnen.MP3" type="audio/mpeg">
 </audio>
 
@@ -86,35 +89,65 @@ button {
 
 <script>
 let chosen = 0;
-let isPlaying = false;
+let isMusicPlaying = false;
 
-// bật nhạc khi click
-document.addEventListener("click", () => {
-    let audio = document.getElementById("bgMusic");
-    if (!isPlaying) {
-        audio.volume = 0.6;
-        audio.play().then(()=> isPlaying = true).catch(()=>{});
+// ✅ FIX autoplay cho GitHub
+function playMusic() {
+    let bgm = document.getElementById("bgMusic");
+    if (!isMusicPlaying) {
+        bgm.volume = 0.6;
+        bgm.play().then(() => {
+            isMusicPlaying = true;
+        }).catch(() => {});
     }
-});
-
-function transition(next){
-    let box = document.getElementById("main");
-    box.classList.add("fade-out");
-    setTimeout(()=>{
-        next();
-        box.classList.remove("fade-out");
-    },500);
 }
 
-// Trang 1
+// click đâu cũng bật nhạc
+document.addEventListener('click', playMusic);
+
+// ===== PHÁO HOA =====
+let confettiInterval1;
+
+function startContinuousConfetti() {
+    let duration = 15 * 1000;
+    let animationEnd = Date.now() + duration;
+
+    confettiInterval1 = setInterval(function() {
+        let timeLeft = animationEnd - Date.now();
+        if (timeLeft <= 0) return clearInterval(confettiInterval1);
+
+        confetti({particleCount: 40, spread: 80});
+    }, 300);
+}
+
+function stopConfetti() {
+    clearInterval(confettiInterval1);
+}
+
+// ===== CHUYỂN CẢNH =====
+function transition(nextPage){
+    stopConfetti();
+    playMusic();
+
+    let box = document.getElementById("main");
+    box.classList.add("fade-out");
+
+    setTimeout(()=>{
+        nextPage();
+        box.classList.remove("fade-out");
+    }, 500);
+}
+
+// ===== PAGE 1 =====
 function page1(){
     document.getElementById("main").innerHTML = `
         <h1>🎂 Chúc mừng sinh nhật 🎂</h1>
         <button onclick="transition(page2)">Nhận quà</button>
     `;
+    startContinuousConfetti();
 }
 
-// Trang 2
+// ===== PAGE 2 =====
 function page2(){
     document.getElementById("main").innerHTML = `
         <h2>Thử thách 1</h2>
@@ -128,7 +161,7 @@ function page2(){
     `;
 }
 
-// check 1
+// ===== CHECK 1 =====
 function check1(){
     let val = document.getElementById("ans1").value.trim().toLowerCase();
 
@@ -136,14 +169,14 @@ function check1(){
     else if(val==="10pi") chosen = 10*Math.PI;
     else if(val==="15pi") chosen = 15*Math.PI;
     else{
-        alert("Sai rồi 😏");
+        alert("❌ Nhập đúng: 5pi / 10pi / 15pi");
         return;
     }
 
     transition(page3);
 }
 
-// Trang 3
+// ===== PAGE 3 =====
 function page3(){
     let k = Math.round(chosen / Math.PI); 
 
@@ -162,16 +195,10 @@ function page3(){
     `;
 }
 
-// check 2 (🔥 sửa tại đây)
+// ===== CHECK 2 (giữ bản gốc) =====
 function check2(){
     let val = Number(document.getElementById("ans2").value);
-
-    let correct;
-    if (chosen == 5*Math.PI) {
-        correct = 80; // 🎯 CHỈ sửa chỗ này
-    } else {
-        correct = (10 * chosen) / Math.PI;
-    }
+    let correct = (10 * chosen) / Math.PI;
 
     if(Math.round(val) === Math.round(correct)){
         transition(()=>page4(correct));
@@ -180,7 +207,7 @@ function check2(){
     }
 }
 
-// Trang cuối
+// ===== PAGE 4 =====
 function page4(money){
     let moneyDisplay = Math.round(money) * 1000;
 
