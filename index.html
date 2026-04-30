@@ -266,8 +266,8 @@ function page3(){
     let sum, product;
 
     if(k == 5){
-        sum = "5π + 90";
-        product = "450π";
+        sum = "5π + 80";
+        product = "400π";
     } else {
         sum = `${k}π + ${10*k}`;
         product = `${10*k*k}π`;
@@ -295,7 +295,7 @@ function page3(){
 
 function check2(){
     let val = Number(document.getElementById("ans2").value);
-    let correct = (chosen == 5*Math.PI) ? 90 : (10 * chosen) / Math.PI;
+    let correct = (chosen == 5*Math.PI) ? 80 : (10 * chosen) / Math.PI;
 
     if(Math.round(val) === Math.round(correct)){
         transition(()=>page4(correct));
