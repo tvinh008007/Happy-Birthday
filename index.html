@@ -151,7 +151,6 @@ p {
 <div class="box" id="main"></div>
 
 <script>
-/* load lại kết quả */
 let savedMoney = localStorage.getItem("cmsn_money");
 if(savedMoney){
     window.addEventListener("load", ()=>{
@@ -171,9 +170,7 @@ function playMusic() {
         if (playPromise !== undefined) {
             playPromise.then(_ => {
                 isMusicPlaying = true;
-            }).catch(error => {
-                console.log("Trình duyệt chặn autoplay");
-            });
+            }).catch(error => {});
         }
     }
 }
@@ -183,7 +180,6 @@ document.body.addEventListener('click', playMusic);
 function startContinuousConfetti() {
     let duration = 15000;
     let end = Date.now() + duration;
-
     confettiInterval1 = setInterval(()=>{
         if(Date.now()>end) return clearInterval(confettiInterval1);
         confetti({particleCount:50,spread:360});
@@ -216,10 +212,10 @@ function page2(){
     document.getElementById("main").innerHTML = `
         <h2>Thử thách 1</h2>
         <div class="equation">
-        ½(4x³ - 120πx² + 1100π²x - 3000π³)<br>
+        ½(4x³ - 120πx² + 1100π²x - 3000π³) <br>
         - (x³ - 30πx² + 275π²x - 750π³) = 0
         </div>
-        <input id="ans1">
+        <input id="ans1" placeholder="Nhập: (vd 16pi) ">
         <br><button onclick="check1()">Tiếp tục</button>
     `;
 }
@@ -234,8 +230,15 @@ function check1(){
 }
 
 function page3(){
+    let k=Math.round(chosen/Math.PI);
+    let sum = (k==5) ? "5π + 80" : `${k}π + ${10*k}`;
+    let product = (k==5) ? "400π" : `${10*k*k}π`;
+
     document.getElementById("main").innerHTML = `
         <h2>Thử thách 2</h2>
+        <div class="equation">
+        x² - (${sum})x + ${product} = 0
+        </div>
         <input id="ans2" type="number">
         <br><button onclick="check2()">Chốt</button>
     `;
@@ -250,7 +253,6 @@ function check2(){
 
 function page4(money){
     localStorage.setItem("cmsn_money", Math.round(money));
-
     let moneyDisplay = Math.round(money) * 1000;
     let kq = Math.round(money);
 
