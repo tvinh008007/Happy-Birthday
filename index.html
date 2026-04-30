@@ -135,19 +135,6 @@ button:hover {
     margin: 20px 0;
 }
 
-.gift-btn button {
-    background: linear-gradient(45deg, #ff4d6d, #ff003c);
-    color: white;
-    box-shadow: 0 0 20px rgba(255,77,109,0.8);
-    animation: pulse 1.5s infinite;
-}
-
-@keyframes pulse {
-    0% { transform: scale(1); box-shadow: 0 0 20px rgba(255,77,109,0.5); }
-    50% { transform: scale(1.1); box-shadow: 0 0 40px rgba(255,77,109,0.9); }
-    100% { transform: scale(1); box-shadow: 0 0 20px rgba(255,77,109,0.5); }
-}
-
 p {
     font-size: 1.2em;
     opacity: 0.9;
@@ -164,7 +151,7 @@ p {
 <div class="box" id="main"></div>
 
 <script>
-/* 🔥 THÊM: load lại kết quả nếu đã có */
+/* load lại kết quả */
 let savedMoney = localStorage.getItem("cmsn_money");
 if(savedMoney){
     window.addEventListener("load", ()=>{
@@ -185,7 +172,7 @@ function playMusic() {
             playPromise.then(_ => {
                 isMusicPlaying = true;
             }).catch(error => {
-                console.log("Trình duyệt chặn autoplay, chờ người dùng tương tác.");
+                console.log("Trình duyệt chặn autoplay");
             });
         }
     }
@@ -194,36 +181,26 @@ function playMusic() {
 document.body.addEventListener('click', playMusic);
 
 function startContinuousConfetti() {
-    let duration = 15 * 1000;
-    let animationEnd = Date.now() + duration;
-    let defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+    let duration = 15000;
+    let end = Date.now() + duration;
 
-    function randomInRange(min, max) { return Math.random() * (max - min) + min; }
-
-    confettiInterval1 = setInterval(function() {
-        let timeLeft = animationEnd - Date.now();
-        if (timeLeft <= 0) { return clearInterval(confettiInterval1); }
-        let particleCount = 50 * (timeLeft / duration);
-        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
-        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
-    }, 250);
+    confettiInterval1 = setInterval(()=>{
+        if(Date.now()>end) return clearInterval(confettiInterval1);
+        confetti({particleCount:50,spread:360});
+    },250);
 }
 
-function stopConfetti() {
-    clearInterval(confettiInterval1);
-}
+function stopConfetti(){ clearInterval(confettiInterval1); }
 
 function transition(nextPage){
     stopConfetti();
     playMusic();
-
     let box = document.getElementById("main");
     box.classList.add("fade-out");
-
     setTimeout(()=>{
         nextPage();
         box.classList.remove("fade-out");
-    }, 600);
+    },600);
 }
 
 function page1(){
@@ -239,120 +216,57 @@ function page2(){
     document.getElementById("main").innerHTML = `
         <h2>Thử thách 1</h2>
         <div class="equation">
-        ½(4x³ - 120πx² + 1100π²x - 3000π³) <br>
+        ½(4x³ - 120πx² + 1100π²x - 3000π³)<br>
         - (x³ - 30πx² + 275π²x - 750π³) = 0
         </div>
-
-        <input id="ans1" placeholder="Nhập: (vd 16pi) " autocomplete="off">
+        <input id="ans1">
         <br><button onclick="check1()">Tiếp tục</button>
     `;
-
-    document.getElementById("ans1").focus();
-    document.getElementById("ans1").addEventListener("keydown", e=>{
-        if(e.key==="Enter") check1();
-    });
 }
 
 function check1(){
-    let val = document.getElementById("ans1").value.trim().toLowerCase();
-
-    if(val==="5pi") chosen = 5*Math.PI;
-    else if(val==="10pi") chosen = 10*Math.PI;
-    else if(val==="15pi") chosen = 15*Math.PI;
-    else{
-        alert("❌ Nhập đúng: 5pi / 10pi / 15pi");
-        return;
-    }
-
+    let v=document.getElementById("ans1").value.trim().toLowerCase();
+    if(v==="5pi") chosen=5*Math.PI;
+    else if(v==="10pi") chosen=10*Math.PI;
+    else if(v==="15pi") chosen=15*Math.PI;
+    else return alert("Sai");
     transition(page3);
 }
 
 function page3(){
-    let k = Math.round(chosen / Math.PI); 
-
-    let sum, product;
-
-    if(k == 5){
-        sum = "5π + 80";
-        product = "400π";
-    } else {
-        sum = `${k}π + ${10*k}`;
-        product = `${10*k*k}π`;
-    }
-
     document.getElementById("main").innerHTML = `
         <h2>Thử thách 2</h2>
-        <p>Biết giá trị bạn vừa nhập là nghiệm <b>x₁</b>:</p>
-
-        <div class="equation">
-        x² - (${sum})x + ${product} = 0
-        </div>
-
-        <p>Tìm nghiệm còn lại <b>x₂</b>:</p>
-
-        <input id="ans2" type="number" autocomplete="off">
+        <input id="ans2" type="number">
         <br><button onclick="check2()">Chốt</button>
     `;
-
-    document.getElementById("ans2").focus();
-    document.getElementById("ans2").addEventListener("keydown", e=>{
-        if(e.key==="Enter") check2();
-    });
 }
 
 function check2(){
-    let val = Number(document.getElementById("ans2").value);
-    let correct = (chosen == 5*Math.PI) ? 80 : (10 * chosen) / Math.PI;
-
-    if(Math.round(val) === Math.round(correct)){
-        transition(()=>page4(correct));
-    } else {
-        alert("Sai rồi 😏");
-    }
+    let v=Number(document.getElementById("ans2").value);
+    let c=(chosen==5*Math.PI)?80:(10*chosen)/Math.PI;
+    if(Math.round(v)===Math.round(c)) transition(()=>page4(c));
+    else alert("Sai");
 }
 
 function page4(money){
-    /* 🔥 THÊM: lưu kết quả */
     localStorage.setItem("cmsn_money", Math.round(money));
 
     let moneyDisplay = Math.round(money) * 1000;
+    let kq = Math.round(money);
+
+    let messLink = `https://m.me/nguyen.o.the.vinh?text=${encodeURIComponent("Đã nhận " + kq + "k")}`;
 
     document.getElementById("main").innerHTML = `
         <h1>🎉 Chúc mừng 🎉</h1>
-        <div class="money-text" id="money">0 VNĐ</div>
-        <div id="gift" style="opacity: 0; transition: opacity 1s; transform: translateY(20px);"></div>
+        <div class="money-text">${moneyDisplay.toLocaleString("vi-VN")} VNĐ</div>
+
+        <p>🎁 Nhấn để nhận quà của bạn:</p>
+        <a href="${messLink}" target="_blank">
+            <button>Nhận quà 🎁</button>
+        </a>
     `;
 
-    let startTime=null;
-    let duration=2000;
-
-    function animate(t){
-        if(!startTime) startTime=t;
-        let progress=Math.min((t-startTime)/duration,1);
-        
-        let easeOutQuart = 1 - Math.pow(1 - progress, 4);
-        let value=Math.floor(easeOutQuart * moneyDisplay);
-
-        document.getElementById("money").innerHTML = value.toLocaleString("vi-VN") + " VNĐ";
-
-        if(progress<1){
-            requestAnimationFrame(animate);
-        } else {
-            confetti({particleCount: 200, spread: 100, origin: {y: 0.6}});
-
-            let giftDiv = document.getElementById("gift");
-            giftDiv.innerHTML = `
-                <p>🎁 Nhấn để nhận quà của bạn:</p>
-                 <a href="https://www.facebook.com/nguyen.o.the.vinh/">
-                    <button>Nhận quà 🎁</button>
-                </a>
-            `;
-            giftDiv.style.opacity = 1;
-            giftDiv.style.transform = "translateY(0)";
-        }
-    }
-
-    requestAnimationFrame(animate);
+    confetti({particleCount:200,spread:100});
 }
 
 page1();
