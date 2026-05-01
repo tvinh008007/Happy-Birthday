@@ -183,22 +183,21 @@ p {
     .money-text { font-size: 3em; }
 }
 
-/* ✅ THÊM */
-@media (max-width: 768px) {
+/* ✅ FIX XOAY NGANG MOBILE */
+@media (max-width: 768px) and (orientation: landscape) {
     body {
         align-items: flex-start;
-        padding-top: 20px;
+        overflow: auto;
     }
 
     .box {
-        transform: scale(0.65);
+        transform: scale(0.55); /* 👈 giảm mạnh hơn khi ngang */
         transform-origin: top center;
-        width: 100%;
-        max-width: 750px;
+        margin-top: 10px;
     }
 
-    h1 { font-size: 1.8em; }
-    .money-text { font-size: 2.2em; }
+    h1 { font-size: 1.6em; }
+    .money-text { font-size: 2em; }
 }
 </style>
 </head>
