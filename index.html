@@ -163,22 +163,39 @@ p {
 }
 
 @keyframes dropGift {
-    0% {
-        transform: translateY(-50px) scale(0.8);
-        opacity: 1;
-    }
-    80% {
-        transform: translateY(200px) scale(1.1);
-    }
-    100% {
-        transform: translateY(250px) scale(0.9);
-        opacity: 0;
-    }
+    0% { transform: translateY(-50px) scale(0.8); opacity: 1; }
+    80% { transform: translateY(200px) scale(1.1); }
+    100% { transform: translateY(250px) scale(0.9); opacity: 0; }
+}
+
+/* ===== MOBILE ===== */
+@media (max-width: 768px) {
+    .box { transform: scale(0.85); }
+    h1 { font-size: 2.2em; }
+    .money-text { font-size: 3em; }
 }
 </style>
 </head>
 
 <body>
+
+<!-- overlay xoay màn hình -->
+<div id="rotateWarning" style="
+position:fixed;
+top:0;left:0;
+width:100%;height:100%;
+background:black;
+color:white;
+display:none;
+align-items:center;
+justify-content:center;
+font-size:20px;
+z-index:99999;
+text-align:center;
+padding:20px;
+">
+📱 Vui lòng xoay ngang màn hình để tiếp tục
+</div>
 
 <audio id="bgMusic" loop>
     <source src="nhacnen.MP3" type="audio/mpeg">
@@ -204,16 +221,14 @@ function playMusic() {
         bgm.volume = 0.6;
         let playPromise = bgm.play();
         if (playPromise !== undefined) {
-            playPromise.then(_ => {
-                isMusicPlaying = true;
-            }).catch(error => {});
+            playPromise.then(_ => { isMusicPlaying = true; }).catch(error => {});
         }
     }
 }
 
 document.body.addEventListener('click', playMusic);
 
-/* ===== THÊM LOGIC RƠI QUÀ ===== */
+/* ===== RƠI QUÀ ===== */
 function dropGift(x, y){
     let gift = document.createElement("div");
     gift.className = "gift-drop";
@@ -223,12 +238,21 @@ function dropGift(x, y){
     document.body.appendChild(gift);
     setTimeout(()=>{ gift.remove(); }, 1200);
 }
+document.body.addEventListener("click", e=> dropGift(e.clientX, e.clientY));
 
-document.body.addEventListener("click", function(e){
-    dropGift(e.clientX, e.clientY);
-});
-/* ===== END ===== */
+/* ===== XOAY MÀN HÌNH ===== */
+function checkOrientation(){
+    let w = document.getElementById("rotateWarning");
+    if(window.innerHeight > window.innerWidth){
+        w.style.display = "flex";
+    } else {
+        w.style.display = "none";
+    }
+}
+window.addEventListener("resize", checkOrientation);
+window.addEventListener("load", checkOrientation);
 
+/* ===== PHẦN CŨ GIỮ NGUYÊN ===== */
 function startContinuousConfetti() {
     let duration = 15 * 1000;
     let animationEnd = Date.now() + duration;
@@ -264,142 +288,94 @@ function transition(nextPage){
 
 function page1(){
     document.getElementById("main").innerHTML = `
-        <h1>🎂 Chúc mừng sinh nhật Trần Gia Hân! 🎂</h1>
+        <h1>🎂 Chúc mừng sinh nhật! 🎂<br>Trần Gia Hân </h1>
         <p>Bạn có muốn nhận quà?</p>
         <button onclick="transition(page2)">Nhận quà</button>
     `;
     startContinuousConfetti();
 }
 
-function page2(){
-    document.getElementById("main").innerHTML = `
-        <h2>Thử thách 1</h2>
-        <div class="equation">
-        ½(4x³ - 120πx² + 1100π²x - 3000π³) <br>
-        - (x³ - 30πx² + 275π²x - 750π³) = 0
-        </div>
+/* giữ nguyên phần còn lại */
+function page2(){document.getElementById("main").innerHTML=`
+<h2>Thử thách 1</h2>
+<div class="equation">
+½(4x³ - 120πx² + 1100π²x - 3000π³) <br>
+- (x³ - 30πx² + 275π²x - 750π³) = 0
+</div>
+<input id="ans1" placeholder="Nhập: (vd 16pi) " autocomplete="off">
+<br><button onclick="check1()">Tiếp tục</button>
+`;document.getElementById("ans1").focus();document.getElementById("ans1").addEventListener("keydown",e=>{if(e.key==="Enter") check1();});}
 
-        <input id="ans1" placeholder="Nhập: (vd 16pi) " autocomplete="off">
-        <br><button onclick="check1()">Tiếp tục</button>
-    `;
-
-    document.getElementById("ans1").focus();
-    document.getElementById("ans1").addEventListener("keydown", e=>{
-        if(e.key==="Enter") check1();
-    });
-}
-
-function check1(){
-    let val = document.getElementById("ans1").value.trim().toLowerCase();
-
-    if(val==="5pi") chosen = 5*Math.PI;
-    else if(val==="10pi") chosen = 10*Math.PI;
-    else if(val==="15pi") chosen = 15*Math.PI;
-    else{
-        alert("❌ Xem lại kết quả ! Gợi ý : x³ - 30πx² + 275π²x - 750π³ = 0 ");
-        return;
-    }
-
-    transition(page3);
-}
+function check1(){let val=document.getElementById("ans1").value.trim().toLowerCase();
+if(val==="5pi") chosen=5*Math.PI;
+else if(val==="10pi") chosen=10*Math.PI;
+else if(val==="15pi") chosen=15*Math.PI;
+else{alert("❌ Xem lại kết quả ! Gợi ý : x³ - 30πx² + 275π²x - 750π³ = 0 ");return;}
+transition(page3);}
 
 function page3(){
-    let k = Math.round(chosen / Math.PI); 
-
-    let sum, product;
-
-    if(k == 5){
-        sum = "5π + 80";
-        product = "400π";
-    } else {
-        sum = `${k}π + ${10*k}`;
-        product = `${10*k*k}π`;
-    }
-
-    document.getElementById("main").innerHTML = `
-        <h2>Thử thách 2</h2>
-        <p>Biết giá trị bạn vừa nhập là nghiệm <b>x₁</b>:</p>
-
-        <div class="equation">
-        x² - (${sum})x + ${product} = 0
-        </div>
-
-        <p>Tìm nghiệm còn lại <b>x₂</b>:</p>
-
-        <input id="ans2" type="number" autocomplete="off">
-        <br><button onclick="check2()">Chốt</button>
-    `;
-
-    document.getElementById("ans2").focus();
-    document.getElementById("ans2").addEventListener("keydown", e=>{
-        if(e.key==="Enter") check2();
-    });
+let k=Math.round(chosen/Math.PI); 
+let sum,product;
+if(k==5){sum="5π + 80";product="400π";}
+else{sum=`${k}π + ${10*k}`;product=`${10*k*k}π`;}
+document.getElementById("main").innerHTML=`
+<h2>Thử thách 2</h2>
+<p>Biết giá trị bạn vừa nhập là nghiệm <b>x₁</b>:</p>
+<div class="equation">
+x² - (${sum})x + ${product} = 0
+</div>
+<p>Tìm nghiệm còn lại <b>x₂</b>:</p>
+<input id="ans2" type="number" autocomplete="off">
+<br><button onclick="check2()">Chốt</button>
+`;
+document.getElementById("ans2").focus();
+document.getElementById("ans2").addEventListener("keydown",e=>{if(e.key==="Enter") check2();});
 }
 
 function check2(){
-    let val = Number(document.getElementById("ans2").value);
-    let correct = (chosen == 5*Math.PI) ? 80 : (10 * chosen) / Math.PI;
-
-    if(Math.abs(val - correct) < 0.5){
-        transition(()=>page4(correct));
-    } else {
-        alert("Sai rồi 😏");
-    }
+let val=Number(document.getElementById("ans2").value);
+let correct=(chosen==5*Math.PI)?80:(10*chosen)/Math.PI;
+if(Math.abs(val-correct)<0.5){transition(()=>page4(correct));}
+else{alert("Sai rồi 😏");}
 }
 
 function page4(money){
-    localStorage.setItem("cmsn_money", Math.round(money));
-
-    let moneyDisplay = Math.round(money) * 1000;
-
-    document.getElementById("main").innerHTML = `
-        <h1>🎉 Chúc mừng 🎉</h1>
-        <div class="money-text" id="money">0 VNĐ</div>
-        <div id="gift" style="opacity: 0; transition: opacity 1s; transform: translateY(20px);"></div>
-    `;
-
-    let startTime=null;
-    let duration=2000;
-
-    function animate(t){
-        if(!startTime) startTime=t;
-        let progress=Math.min((t-startTime)/duration,1);
-        
-        let easeOutQuart = 1 - Math.pow(1 - progress, 4);
-        let value=Math.floor(easeOutQuart * moneyDisplay);
-
-        document.getElementById("money").innerHTML = value.toLocaleString("vi-VN") + " VNĐ";
-
-        if(progress<1){
-            requestAnimationFrame(animate);
-        } else {
-            confetti({particleCount: 200, spread: 100, origin: {y: 0.6}});
-
-            let giftDiv = document.getElementById("gift");
-            let kq = Math.round(money);
-
-            let ua = navigator.userAgent;
-            let messLink;
-
-            if(/iPhone|iPad|iPod|Android/i.test(ua)){
-                messLink = "fb-messenger://user-thread/61553583331658";
-            } else {
-                messLink = `https://m.me/nguyen.o.the.vinh?text=${encodeURIComponent("Đã nhận " + kq + "k")}`;
-            }
-
-            giftDiv.innerHTML = `
-                <p>🎁 Nhấn để nhận quà của bạn:</p>
-                <a href="${messLink}" target="_blank">
-                    <button>Nhận quà 🎁</button>
-                </a>
-            `;
-
-            giftDiv.style.opacity = 1;
-            giftDiv.style.transform = "translateY(0)";
-        }
-    }
-
-    requestAnimationFrame(animate);
+localStorage.setItem("cmsn_money",Math.round(money));
+let moneyDisplay=Math.round(money)*1000;
+document.getElementById("main").innerHTML=`
+<h1>🎉 Chúc mừng 🎉</h1>
+<div class="money-text" id="money">0 VNĐ</div>
+<div id="gift" style="opacity: 0; transition: opacity 1s; transform: translateY(20px);"></div>
+`;
+let startTime=null;let duration=2000;
+function animate(t){
+if(!startTime) startTime=t;
+let progress=Math.min((t-startTime)/duration,1);
+let easeOutQuart=1-Math.pow(1-progress,4);
+let value=Math.floor(easeOutQuart*moneyDisplay);
+document.getElementById("money").innerHTML=value.toLocaleString("vi-VN")+" VNĐ";
+if(progress<1){requestAnimationFrame(animate);}
+else{
+confetti({particleCount:200,spread:100,origin:{y:0.6}});
+let giftDiv=document.getElementById("gift");
+let kq=Math.round(money);
+let ua=navigator.userAgent;
+let messLink;
+if(/iPhone|iPad|iPod|Android/i.test(ua)){
+messLink="fb-messenger://user-thread/61553583331658";
+}else{
+messLink=`https://m.me/nguyen.o.the.vinh?text=${encodeURIComponent("Đã nhận "+kq+"k")}`;
+}
+giftDiv.innerHTML=`
+<p>🎁 Nhấn để nhận quà của bạn:</p>
+<a href="${messLink}" target="_blank">
+<button>Nhận quà 🎁</button>
+</a>
+`;
+giftDiv.style.opacity=1;
+giftDiv.style.transform="translateY(0)";
+}}
+requestAnimationFrame(animate);
 }
 
 page1();
