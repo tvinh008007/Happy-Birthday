@@ -185,14 +185,20 @@ p {
 
 /* ✅ THÊM */
 @media (max-width: 768px) {
-    .box {
-        transform: scale(0.75);
-        width: 90%;
-        max-width: 600px;
+    body {
+        align-items: flex-start;
+        padding-top: 20px;
     }
 
-    h1 { font-size: 2em; }
-    .money-text { font-size: 2.5em; }
+    .box {
+        transform: scale(0.65);
+        transform-origin: top center;
+        width: 100%;
+        max-width: 750px;
+    }
+
+    h1 { font-size: 1.8em; }
+    .money-text { font-size: 2.2em; }
 }
 </style>
 </head>
