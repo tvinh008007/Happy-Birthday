@@ -152,6 +152,29 @@ p {
     font-size: 1.2em;
     opacity: 0.9;
 }
+
+/* ===== THÊM HIỆU ỨNG RƠI QUÀ ===== */
+.gift-drop {
+    position: fixed;
+    font-size: 30px;
+    pointer-events: none;
+    animation: dropGift 1.2s ease forwards;
+    z-index: 9999;
+}
+
+@keyframes dropGift {
+    0% {
+        transform: translateY(-50px) scale(0.8);
+        opacity: 1;
+    }
+    80% {
+        transform: translateY(200px) scale(1.1);
+    }
+    100% {
+        transform: translateY(250px) scale(0.9);
+        opacity: 0;
+    }
+}
 </style>
 </head>
 
@@ -190,6 +213,22 @@ function playMusic() {
 
 document.body.addEventListener('click', playMusic);
 
+/* ===== THÊM LOGIC RƠI QUÀ ===== */
+function dropGift(x, y){
+    let gift = document.createElement("div");
+    gift.className = "gift-drop";
+    gift.innerHTML = "🎁";
+    gift.style.left = x + "px";
+    gift.style.top = y + "px";
+    document.body.appendChild(gift);
+    setTimeout(()=>{ gift.remove(); }, 1200);
+}
+
+document.body.addEventListener("click", function(e){
+    dropGift(e.clientX, e.clientY);
+});
+/* ===== END ===== */
+
 function startContinuousConfetti() {
     let duration = 15 * 1000;
     let animationEnd = Date.now() + duration;
@@ -225,7 +264,7 @@ function transition(nextPage){
 
 function page1(){
     document.getElementById("main").innerHTML = `
-        <h1>🎂 Chúc mừng sinh nhật! 🎂</h1>
+        <h1>🎂 Chúc mừng sinh nhật Trần Gia Hân! 🎂</h1>
         <p>Bạn có muốn nhận quà?</p>
         <button onclick="transition(page2)">Nhận quà</button>
     `;
