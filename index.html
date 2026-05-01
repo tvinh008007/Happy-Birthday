@@ -27,6 +27,12 @@ body {
     overflow: hidden;
 }
 
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
 .box {
     background: rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(20px);
@@ -39,6 +45,9 @@ body {
     max-width: 750px;
     min-height: 350px;
     transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    opacity: 1;
+    transform: scale(1) translateY(0);
+    filter: blur(0);
 }
 
 .fade-out {
@@ -50,11 +59,20 @@ body {
 h1 { 
     font-size: 3em; 
     margin-bottom: 10px;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+    animation: floating 3s ease-in-out infinite;
+}
+
+@keyframes floating {
+    0% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+    100% { transform: translateY(0px); }
 }
 
 h2 { 
     color: #ffe600; 
     font-size: 2em; 
+    text-shadow: 0 0 10px rgba(255, 222, 0, 0.5);
 }
 
 .equation {
@@ -62,25 +80,77 @@ h2 {
     padding: 20px;
     border-radius: 15px;
     margin: 25px 0;
-    font-family: monospace;
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 1.2em;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
 }
 
 input {
-    padding: 15px;
-    width: 75%;
+    padding: 15px 25px;
+    font-size: 18px;
     border-radius: 50px;
+    border: 2px solid transparent;
+    width: 75%;
+    background: rgba(255, 255, 255, 0.9);
+    color: #333;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-align: center;
+    outline: none;
+}
+
+input:focus {
+    border: 2px solid #ffe600;
+    box-shadow: 0 0 20px rgba(255, 230, 0, 0.4);
+    transform: scale(1.02);
 }
 
 button {
     padding: 15px 35px;
-    margin-top: 20px;
+    font-size: 1.2em;
+    font-weight: 800;
     border-radius: 50px;
+    background: linear-gradient(45deg, #ffe600, #ff9900);
+    color: #2a1b3d;
+    border: none;
+    margin-top: 25px;
     cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(255, 153, 0, 0.4);
+}
+
+button:hover {
+    transform: translateY(-5px) scale(1.05);
+    box-shadow: 0 10px 25px rgba(255, 153, 0, 0.6);
 }
 
 .money-text {
-    font-size: 3em;
+    font-size: 4em;
+    font-weight: 800;
+    background: linear-gradient(to right, #ffd700, #ff8c00);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
     margin: 20px 0;
+}
+
+.gift-btn button {
+    background: linear-gradient(45deg, #ff4d6d, #ff003c);
+    color: white;
+    box-shadow: 0 0 20px rgba(255,77,109,0.8);
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); box-shadow: 0 0 20px rgba(255,77,109,0.5); }
+    50% { transform: scale(1.1); box-shadow: 0 0 40px rgba(255,77,109,0.9); }
+    100% { transform: scale(1); box-shadow: 0 0 20px rgba(255,77,109,0.5); }
+}
+
+p {
+    font-size: 1.2em;
+    opacity: 0.9;
 }
 </style>
 </head>
@@ -109,17 +179,31 @@ function playMusic() {
     let bgm = document.getElementById("bgMusic");
     if (!isMusicPlaying) {
         bgm.volume = 0.6;
-        bgm.play().catch(()=>{});
-        isMusicPlaying = true;
+        let playPromise = bgm.play();
+        if (playPromise !== undefined) {
+            playPromise.then(_ => {
+                isMusicPlaying = true;
+            }).catch(error => {});
+        }
     }
 }
 
 document.body.addEventListener('click', playMusic);
 
 function startContinuousConfetti() {
-    confettiInterval1 = setInterval(()=>{
-        confetti({particleCount: 30});
-    }, 300);
+    let duration = 15 * 1000;
+    let animationEnd = Date.now() + duration;
+    let defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+    function randomInRange(min, max) { return Math.random() * (max - min) + min; }
+
+    confettiInterval1 = setInterval(function() {
+        let timeLeft = animationEnd - Date.now();
+        if (timeLeft <= 0) { return clearInterval(confettiInterval1); }
+        let particleCount = 50 * (timeLeft / duration);
+        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+        confetti(Object.assign({}, defaults, { particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+    }, 250);
 }
 
 function stopConfetti() {
@@ -217,7 +301,7 @@ function check2(){
     let val = Number(document.getElementById("ans2").value);
     let correct = (chosen == 5*Math.PI) ? 80 : (10 * chosen) / Math.PI;
 
-    if(Math.round(val) === Math.round(correct)){
+    if(Math.abs(val - correct) < 0.5){
         transition(()=>page4(correct));
     } else {
         alert("Sai rồi 😏");
@@ -232,34 +316,51 @@ function page4(money){
     document.getElementById("main").innerHTML = `
         <h1>🎉 Chúc mừng 🎉</h1>
         <div class="money-text" id="money">0 VNĐ</div>
-        <div id="gift" style="opacity: 0;"></div>
+        <div id="gift" style="opacity: 0; transition: opacity 1s; transform: translateY(20px);"></div>
     `;
 
-    setTimeout(()=>{
-        confetti({particleCount: 200});
+    let startTime=null;
+    let duration=2000;
 
-        let giftDiv = document.getElementById("gift");
-        let kq = Math.round(money);
+    function animate(t){
+        if(!startTime) startTime=t;
+        let progress=Math.min((t-startTime)/duration,1);
+        
+        let easeOutQuart = 1 - Math.pow(1 - progress, 4);
+        let value=Math.floor(easeOutQuart * moneyDisplay);
 
-        let ua = navigator.userAgent;
-        let messLink;
+        document.getElementById("money").innerHTML = value.toLocaleString("vi-VN") + " VNĐ";
 
-        if(/iPhone|iPad|iPod|Android/i.test(ua)){
-            messLink = "fb-messenger://user-thread/61553583331658";
+        if(progress<1){
+            requestAnimationFrame(animate);
         } else {
-            messLink = `https://m.me/nguyen.o.the.vinh?text=${encodeURIComponent("Đã nhận " + kq + "k")}`;
+            confetti({particleCount: 200, spread: 100, origin: {y: 0.6}});
+
+            let giftDiv = document.getElementById("gift");
+            let kq = Math.round(money);
+
+            let ua = navigator.userAgent;
+            let messLink;
+
+            if(/iPhone|iPad|iPod|Android/i.test(ua)){
+                messLink = "fb-messenger://user-thread/61553583331658";
+            } else {
+                messLink = `https://m.me/nguyen.o.the.vinh?text=${encodeURIComponent("Đã nhận " + kq + "k")}`;
+            }
+
+            giftDiv.innerHTML = `
+                <p>🎁 Nhấn để nhận quà của bạn:</p>
+                <a href="${messLink}" target="_blank">
+                    <button>Nhận quà 🎁</button>
+                </a>
+            `;
+
+            giftDiv.style.opacity = 1;
+            giftDiv.style.transform = "translateY(0)";
         }
+    }
 
-        giftDiv.innerHTML = `
-            <p>🎁 Nhấn để nhận quà của bạn:</p>
-            <a href="${messLink}" target="_blank">
-                <button>Nhận quà 🎁</button>
-            </a>
-        `;
-
-        giftDiv.style.opacity = 1;
-
-    }, 1000);
+    requestAnimationFrame(animate);
 }
 
 page1();
