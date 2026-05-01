@@ -2,13 +2,21 @@
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ✅ THÊM -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+
 <title>CMSN 🎂</title>
 
 <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
+
+/* ✅ THÊM */
+html, body {
+    height: 100dvh;
+}
 
 body {
     font-family: 'Poppins', sans-serif;
@@ -173,6 +181,13 @@ p {
     .box { transform: scale(0.85); }
     h1 { font-size: 2.2em; }
     .money-text { font-size: 3em; }
+}
+
+/* ✅ THÊM */
+@media (max-width: 768px) {
+    body {
+        height: 100dvh;
+    }
 }
 </style>
 </head>
