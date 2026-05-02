@@ -301,6 +301,8 @@ function page2(){
         <br><button onclick="check1()">Tiếp tục</button>
     `;
 
+    autoFitText(); // 👈 THÊM DÒNG NÀY
+
     document.getElementById("ans1").focus();
     document.getElementById("ans1").addEventListener("keydown", e=>{
         if(e.key==="Enter") check1();
@@ -348,6 +350,28 @@ function page3(){
         <br><button onclick="check2()">Chốt</button>
     `;
 
+    autoFitText(); // 👈 THÊM DÒNG NÀY
+
+    document.getElementById("ans2").focus();
+    document.getElementById("ans2").addEventListener("keydown", e=>{
+        if(e.key==="Enter") check2();
+    });
+}
+
+    document.getElementById("main").innerHTML = `
+        <h2>Thử thách 2</h2>
+        <p>Biết giá trị bạn vừa nhập là nghiệm <b>x₁</b>:</p>
+
+        <div class="equation">
+        x² - (${sum})x + ${product} = 0
+        </div>
+
+        <p>Tìm nghiệm còn lại <b>x₂</b>:</p>
+
+        <input id="ans2" type="number" autocomplete="off">
+        <br><button onclick="check2()">Chốt</button>
+    `;
+
     document.getElementById("ans2").focus();
     document.getElementById("ans2").addEventListener("keydown", e=>{
         if(e.key==="Enter") check2();
@@ -375,6 +399,8 @@ function page4(money){
         <div class="money-text" id="money">0 VNĐ</div>
         <div id="gift" style="opacity: 0; transition: opacity 1s; transform: translateY(20px);"></div>
     `;
+
+    autoFitText(); // 👈 THÊM DÒNG NÀY
 
     let startTime=null;
     let duration=2000;
@@ -420,16 +446,16 @@ function page4(money){
     requestAnimationFrame(animate);
 }
 function autoFitText() {
-    const el = document.querySelector("#main h1");
-    if (!el) return;
-
-    let fontSize = 60;
-    el.style.fontSize = fontSize + "px";
-
-    while (el.scrollWidth > el.clientWidth && fontSize > 12) {
-        fontSize--;
+    const els = document.querySelectorAll("#main h1, #main h2");
+    els.forEach(el => {
+        let fontSize = 50;
         el.style.fontSize = fontSize + "px";
-    }
+
+        while (el.scrollWidth > el.clientWidth && fontSize > 12) {
+            fontSize--;
+            el.style.fontSize = fontSize + "px";
+        }
+    });
 }
 page1();
 </script>
