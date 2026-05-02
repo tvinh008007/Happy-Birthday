@@ -221,6 +221,10 @@ button:hover {
         font-size: 0.95rem;
     }
 }
+
+.title-line {
+    white-space: nowrap;
+}
 </style>
 </head>
 
@@ -341,7 +345,11 @@ function transition(nextPage){
 
 function page1(){
     document.getElementById("main").innerHTML = `
-        <h1>🎂 Chúc mừng sinh nhật! 🎂<br>Trần Gia Hân </h1>
+        <h1>
+            <span class="title-line">🎂 Chúc mừng sinh nhật! 🎂</span>
+            <br>
+            Trần Gia Hân
+        </h1>
         <p>Bạn có muốn nhận quà?</p>
         <button onclick="transition(page2)">Nhận quà</button>
     `;
