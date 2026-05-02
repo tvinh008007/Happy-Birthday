@@ -10,6 +10,11 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;800&display=swap');
 
+/* ✅ FIX TRÀN LAYOUT */
+* {
+    box-sizing: border-box;
+}
+
 body {
     font-family: 'Poppins', sans-serif;
     text-align: center;
@@ -24,16 +29,9 @@ body {
         linear-gradient(rgba(0,0,0,0.3), rgba(0,0,0,0.3)),
         url('https://lh3.googleusercontent.com/d/1Yx0jJuyUAgEaBXOQPywPXubilDKx_YFo') no-repeat center center / cover;
 
-    /* ✅ FIX MOBILE SCROLL */
     overflow-x: hidden;
     overflow-y: auto;
     padding: 20px 10px;
-}
-
-@keyframes gradientBG {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
 }
 
 .box {
@@ -50,21 +48,31 @@ body {
     transition: all 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
     opacity: 1;
     transform: scale(1) translateY(0);
-    filter: blur(0);
 }
 
 .fade-out {
     opacity: 0;
-    transform: scale(0.8) translateY(30px);
-    filter: blur(10px);
+    transform: scale(0.85) translateY(20px);
+    filter: blur(8px);
 }
 
-/* ✅ FONT AUTO SCALE */
+/* ===== TEXT SCALE HỢP LÝ HƠN ===== */
 h1 { 
-    font-size: clamp(1.8rem, 5vw, 3em); 
+    font-size: clamp(2.2rem, 5vw, 3em); 
     margin-bottom: 10px;
     text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
     animation: floating 3s ease-in-out infinite;
+}
+
+h2 { 
+    color: #ffe600; 
+    font-size: clamp(1.5rem, 4vw, 2em); 
+    text-shadow: 0 0 10px rgba(255, 222, 0, 0.5);
+}
+
+p {
+    font-size: clamp(1rem, 2.5vw, 1.2em);
+    opacity: 0.9;
 }
 
 @keyframes floating {
@@ -73,57 +81,50 @@ h1 {
     100% { transform: translateY(0px); }
 }
 
-h2 { 
-    color: #ffe600; 
-    font-size: clamp(1.3rem, 4vw, 2em); 
-    text-shadow: 0 0 10px rgba(255, 222, 0, 0.5);
-}
-
-p {
-    font-size: clamp(0.95rem, 2.5vw, 1.2em);
-    opacity: 0.9;
-}
-
+/* ===== EQUATION ===== */
 .equation {
     background: rgba(0, 0, 0, 0.4);
     padding: 20px;
     border-radius: 15px;
     margin: 25px 0;
     font-family: 'Courier New', Courier, monospace;
-    font-size: clamp(0.9rem, 2.5vw, 1.2em);
+    font-size: clamp(0.95rem, 2.5vw, 1.2em);
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: inset 0 0 10px rgba(0,0,0,0.5);
 }
 
+/* ===== INPUT ===== */
 input {
-    padding: 15px 25px;
-    font-size: clamp(14px, 3.5vw, 18px);
+    width: 100%;
+    max-width: 400px;
+    padding: 15px 20px;
+    font-size: clamp(15px, 3.5vw, 18px);
     border-radius: 50px;
     border: 2px solid transparent;
-    width: 75%;
     background: rgba(255, 255, 255, 0.9);
     color: #333;
     font-weight: 600;
-    transition: all 0.3s ease;
     text-align: center;
     outline: none;
+    margin: 0 auto;
+    display: block;
 }
 
 input:focus {
     border: 2px solid #ffe600;
     box-shadow: 0 0 20px rgba(255, 230, 0, 0.4);
-    transform: scale(1.02);
 }
 
+/* ===== BUTTON ===== */
 button {
     padding: 15px 35px;
-    font-size: clamp(0.9rem, 3vw, 1.2em);
+    font-size: clamp(1rem, 3vw, 1.2em);
     font-weight: 800;
     border-radius: 50px;
     background: linear-gradient(45deg, #ffe600, #ff9900);
     color: #2a1b3d;
     border: none;
-    margin-top: 25px;
+    margin-top: 20px;
     cursor: pointer;
     transition: all 0.3s ease;
     box-shadow: 0 5px 15px rgba(255, 153, 0, 0.4);
@@ -131,19 +132,18 @@ button {
 
 button:hover {
     transform: translateY(-5px) scale(1.05);
-    box-shadow: 0 10px 25px rgba(255, 153, 0, 0.6);
 }
 
+/* ===== MONEY ===== */
 .money-text {
-    font-size: clamp(2.2rem, 6vw, 4em);
+    font-size: clamp(2.8rem, 6vw, 4em);
     font-weight: 800;
     background: linear-gradient(to right, #ffd700, #ff8c00);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    text-shadow: 0 0 30px rgba(255, 215, 0, 0.3);
-    margin: 20px 0;
 }
 
+/* ===== GIFT ===== */
 .gift-btn button {
     background: linear-gradient(45deg, #ff4d6d, #ff003c);
     color: white;
@@ -152,12 +152,12 @@ button:hover {
 }
 
 @keyframes pulse {
-    0% { transform: scale(1); box-shadow: 0 0 20px rgba(255,77,109,0.5); }
-    50% { transform: scale(1.1); box-shadow: 0 0 40px rgba(255,77,109,0.9); }
-    100% { transform: scale(1); box-shadow: 0 0 20px rgba(255,77,109,0.5); }
+    0% { transform: scale(1); }
+    50% { transform: scale(1.08); }
+    100% { transform: scale(1); }
 }
 
-/* ===== HIỆU ỨNG RƠI QUÀ ===== */
+/* ===== DROP ===== */
 .gift-drop {
     position: fixed;
     font-size: 30px;
@@ -167,38 +167,25 @@ button:hover {
 }
 
 @keyframes dropGift {
-    0% {
-        transform: translateY(-50px) scale(0.8);
-        opacity: 1;
-    }
-    80% {
-        transform: translateY(200px) scale(1.1);
-    }
-    100% {
-        transform: translateY(250px) scale(0.9);
-        opacity: 0;
-    }
+    0% { transform: translateY(-50px) scale(0.8); opacity: 1; }
+    80% { transform: translateY(200px) scale(1.1); }
+    100% { transform: translateY(250px) scale(0.9); opacity: 0; }
 }
 
-/* ✅ MOBILE FINE-TUNE */
+/* ===== MOBILE TUNE ===== */
 @media (max-width: 768px) {
     .box {
-        padding: 30px 20px;
-        border-radius: 20px;
-        min-height: auto;
-    }
-
-    input {
-        width: 90%;
-    }
-
-    button {
-        margin-top: 15px;
+        padding: 35px 25px;
+        border-radius: 22px;
     }
 
     .equation {
-        margin: 15px 0;
-        padding: 15px;
+        padding: 18px;
+        margin: 18px 0;
+    }
+
+    button {
+        margin-top: 18px;
     }
 }
 </style>
