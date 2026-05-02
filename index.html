@@ -192,7 +192,11 @@ button:hover {
     .box {
         padding: 30px 20px;
         border-radius: 20px;
-        min-height: auto;
+
+        min-height: 60vh;   /* 👈 dùng luôn ở đây */
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
     }
 
     input {
@@ -225,6 +229,7 @@ button:hover {
 .title-line {
     white-space: nowrap;
 }
+
 </style>
 </head>
 
@@ -278,35 +283,26 @@ document.body.addEventListener("click", function(e){
     let x = e.clientX / window.innerWidth;
     let y = e.clientY / window.innerHeight;
 
-    // 🎁 rơi
-    dropGift(e.clientX, e.clientY);
+// 🎁 rơi
+dropGift(e.clientX, e.clientY);
 
-    // 🎆 bắn trái
-    confetti({
-        particleCount: 40,
-        angle: 180,
-        spread: 60,
-        startVelocity: 45,
-        origin: { x: x, y: y }
-    });
+// 🎆 nhỏ gọn quanh điểm click
+confetti({
+    particleCount: 25,
+    spread: 35,          // 👈 giảm độ toả
+    startVelocity: 30,   // 👈 giảm lực bay
+    ticks: 40,           // 👈 bay ngắn hơn
+    origin: { x: x, y: y }
+});
 
-    // 🎆 bắn phải
-    confetti({
-        particleCount: 40,
-        angle: 0,
-        spread: 60,
-        startVelocity: 45,
-        origin: { x: x, y: y }
-    });
-
-    // 🎆 bắn lên trên (giống pháo)
-    confetti({
-        particleCount: 50,
-        angle: 270,
-        spread: 80,
-        startVelocity: 55,
-        origin: { x: x, y: y }
-    });
+// thêm 1 lớp nhẹ cho đẹp
+confetti({
+    particleCount: 15,
+    spread: 25,
+    startVelocity: 20,
+    ticks: 30,
+    scalar: 0.8,         // 👈 hạt nhỏ hơn
+    origin: { x: x, y: y }
 });
 /* ===== END ===== */
 
