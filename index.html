@@ -194,12 +194,16 @@ button:hover {
         display: flex;
         flex-direction: column;
         justify-content: space-evenly;
+        align-items: center;
+
         gap: 7px;
         min-height: 60vh;
     }
 
-    input {
-        width: 90%;
+    /* ✅ đồng bộ chiều rộng → hết lệch */
+    input, button, .equation {
+        width: 85%;
+        max-width: 500px;
     }
 
     button {
