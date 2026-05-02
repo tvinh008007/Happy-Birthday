@@ -62,6 +62,8 @@ h1 {
     margin-bottom: 10px;
     text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
     animation: floating 3s ease-in-out infinite;
+
+    white-space: nowrap; /* 👈 thêm dòng này */
 }
 
 h2 { 
@@ -281,6 +283,9 @@ function page1(){
         <p>Bạn có muốn nhận quà?</p>
         <button onclick="transition(page2)">Nhận quà</button>
     `;
+
+    autoFitText(); // 👈 THÊM DÒNG NÀY
+
     startContinuousConfetti();
 }
 
@@ -414,7 +419,18 @@ function page4(money){
 
     requestAnimationFrame(animate);
 }
+function autoFitText() {
+    const el = document.querySelector("#main h1");
+    if (!el) return;
 
+    let fontSize = 60;
+    el.style.fontSize = fontSize + "px";
+
+    while (el.scrollWidth > el.clientWidth && fontSize > 12) {
+        fontSize--;
+        el.style.fontSize = fontSize + "px";
+    }
+}
 page1();
 </script>
 
