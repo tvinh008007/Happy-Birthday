@@ -63,7 +63,7 @@ h1 {
     text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
     animation: floating 3s ease-in-out infinite;
 
-    white-space: nowrap; /* 👈 thêm dòng này */
+    white-space: normal; /* 👈 thêm dòng này */
 }
 
 h2 { 
@@ -336,15 +336,6 @@ function page3(){
         product = `${10*k*k}π`;
     }
 
-
-    autoFitText(); // 👈 THÊM DÒNG NÀY
-
-    document.getElementById("ans2").focus();
-    document.getElementById("ans2").addEventListener("keydown", e=>{
-        if(e.key==="Enter") check2();
-    });
-}
-
     document.getElementById("main").innerHTML = `
         <h2>Thử thách 2</h2>
         <p>Biết giá trị bạn vừa nhập là nghiệm <b>x₁</b>:</p>
@@ -358,6 +349,8 @@ function page3(){
         <input id="ans2" type="number" autocomplete="off">
         <br><button onclick="check2()">Chốt</button>
     `;
+
+    autoFitText();
 
     document.getElementById("ans2").focus();
     document.getElementById("ans2").addEventListener("keydown", e=>{
