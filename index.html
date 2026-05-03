@@ -290,22 +290,26 @@ document.body.addEventListener("click", function(e){
     dropGift(e.clientX, e.clientY);
 
     // 🎆 nhỏ gọn quanh điểm click
-    confetti({
-        particleCount: 25,
-        spread: 35,
-        startVelocity: 30,
-        ticks: 40,
-        origin: { x: x, y: y }
-    });
+let count = 45;
+let radius = 6; // 🔥 phạm vi nhỏ hơn (càng nhỏ càng tụ)
+
+for (let i = 0; i < count; i++) {
+    let angle = (i / count) * Math.PI * 2;
 
     confetti({
-        particleCount: 15,
-        spread: 25,
-        startVelocity: 20,
-        ticks: 30,
-        scalar: 0.8,
-        origin: { x: x, y: y }
+        particleCount: 1,
+        startVelocity: 8 + Math.random() * 6,
+        spread: 10,
+        ticks: 40,
+        gravity: 0.7,
+        scalar: 0.9,
+
+        origin: {
+            x: x + Math.cos(angle) * (radius / window.innerWidth),
+            y: y + Math.sin(angle) * (radius / window.innerHeight)
+        }
     });
+}
 }); 
 /* ===== END ===== */
 
